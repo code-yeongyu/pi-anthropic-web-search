@@ -1,6 +1,10 @@
 # pi-anthropic-web-search
 
-Anthropic native web search extension for the [pi coding agent](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent). It ports the senpi-mono builtin `anthropic-web-search` extension into a standalone pi extension.
+[![ci](https://github.com/code-yeongyu/pi-anthropic-web-search/actions/workflows/ci.yml/badge.svg)](https://github.com/code-yeongyu/pi-anthropic-web-search/actions/workflows/ci.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+Anthropic native web search extension for the [pi coding agent](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent).
+
+This package is the standalone extraction of senpi's former builtin `anthropic-web-search` extension.
 
 ## Behavior
 
