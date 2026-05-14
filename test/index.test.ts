@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import anthropicWebSearchExtension, {
 	ANTHROPIC_WEB_SEARCH_SECTION,
 	addAnthropicWebSearchToPayload,
@@ -10,6 +10,12 @@ const ENABLE_ENV = "PI_ANTHROPIC_WEB_SEARCH";
 const ALLOWED_DOMAINS_ENV = "PI_ANTHROPIC_WEB_SEARCH_ALLOWED_DOMAINS";
 const BLOCKED_DOMAINS_ENV = "PI_ANTHROPIC_WEB_SEARCH_BLOCKED_DOMAINS";
 
+type TestUi = {
+	setStatus: (key: string, value: string | undefined) => void;
+	setWidget: (key: string, lines: string[] | undefined, options?: { placement: "belowEditor" }) => void;
+	theme: { fg: (key: string, value: string) => string };
+};
+
 afterEach(() => {
 	delete process.env[ENABLE_ENV];
 	delete process.env[ALLOWED_DOMAINS_ENV];
@@ -17,6 +23,41 @@ afterEach(() => {
 });
 
 describe("anthropic-web-search builtin extension", () => {
+	it("shows native web search widget for Anthropic sessions", async () => {
+		type SessionStartHandler = (
+			event: object,
+			ctx: { model?: { api?: string }; hasUI?: boolean; ui: TestUi },
+		) => Promise<void> | void;
+
+		let sessionStartHandler: SessionStartHandler | undefined;
+		const setStatus = vi.fn();
+		const setWidget = vi.fn();
+		const pi = {
+			on(eventName: string, handler: unknown) {
+				if (eventName === "session_start") {
+					sessionStartHandler = handler as SessionStartHandler;
+				}
+			},
+		} satisfies Pick<ExtensionAPI, "on">;
+
+		anthropicWebSearchExtension(pi as ExtensionAPI);
+		await sessionStartHandler?.(
+			{},
+			{
+				model: { api: "anthropic-messages" },
+				hasUI: true,
+				ui: { setStatus, setWidget, theme: { fg: (_key: string, value: string) => value } },
+			},
+		);
+
+		expect(setStatus).toHaveBeenCalledWith("pi-anthropic-web-search", "web_search native");
+		expect(setWidget).toHaveBeenCalledWith(
+			"pi-anthropic-web-search",
+			["Native Web Search", "Anthropic · web_search_20250305 · max_uses 8"],
+			{ placement: "belowEditor" },
+		);
+	});
+
 	it("is a no-op when model api is not anthropic-messages", () => {
 		const payload = {
 			tools: [{ name: "web_search", description: "function tool" }],
