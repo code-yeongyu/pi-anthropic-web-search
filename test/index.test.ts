@@ -51,11 +51,7 @@ describe("anthropic-web-search builtin extension", () => {
 		);
 
 		expect(setStatus).toHaveBeenCalledWith("pi-anthropic-web-search", undefined);
-		expect(setWidget).toHaveBeenCalledWith(
-			"pi-anthropic-web-search",
-			["Native Web Search", "Anthropic · web_search_20250305 · max_uses 8"],
-			{ placement: "belowEditor" },
-		);
+		expect(setWidget).toHaveBeenCalledWith("pi-anthropic-web-search", undefined);
 	});
 
 	it("is a no-op when model api is not anthropic-messages", () => {
