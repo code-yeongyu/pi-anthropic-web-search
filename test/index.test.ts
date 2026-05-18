@@ -90,7 +90,7 @@ describe("anthropic-web-search builtin extension", () => {
 			tools: Array<Record<string, unknown>>;
 		};
 
-		const webSearchTools = result.tools.filter((tool) => tool.name === "web_search");
+		const webSearchTools = result.tools.filter((tool) => tool["name"] === "web_search");
 		expect(webSearchTools).toHaveLength(1);
 		expect(webSearchTools[0]).toEqual({ type: "web_search_20260209", name: "web_search", max_uses: 3 });
 	});
@@ -104,7 +104,7 @@ describe("anthropic-web-search builtin extension", () => {
 			tools: Array<Record<string, unknown>>;
 		};
 
-		const webSearchTools = result.tools.filter((tool) => tool.name === "web_search");
+		const webSearchTools = result.tools.filter((tool) => tool["name"] === "web_search");
 		expect(webSearchTools).toHaveLength(1);
 		expect(webSearchTools[0]).toEqual({ type: "web_search_20250305", name: "web_search", max_uses: 8 });
 	});

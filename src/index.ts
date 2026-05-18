@@ -75,8 +75,8 @@ function sanitizeTools(tools: unknown[]): ToolDefinition[] {
 			continue;
 		}
 
-		const name = tool.name;
-		const type = tool.type;
+		const name = tool["name"];
+		const type = tool["type"];
 		const shouldStripFunctionVariant = name === "web_search" && !isWebSearchType(type);
 		if (!shouldStripFunctionVariant) {
 			sanitized.push(tool);
@@ -98,9 +98,9 @@ export function addAnthropicWebSearchToPayload(api: Api | undefined, payload: un
 		return payload;
 	}
 
-	const tools = Array.isArray(payload.tools) ? payload.tools : [];
+	const tools = Array.isArray(payload["tools"]) ? payload["tools"] : [];
 	const sanitizedTools = sanitizeTools(tools);
-	const hasNativeWebSearch = sanitizedTools.some((tool) => isWebSearchType(tool.type));
+	const hasNativeWebSearch = sanitizedTools.some((tool) => isWebSearchType(tool["type"]));
 	if (!hasNativeWebSearch) {
 		sanitizedTools.push(makeWebSearchTool());
 	}
