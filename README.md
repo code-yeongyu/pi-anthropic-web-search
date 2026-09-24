@@ -8,13 +8,14 @@ This package is the standalone extraction of senpi's former builtin `anthropic-w
 
 ## Behavior
 
-The extension does not register a new tool. It intercepts Anthropic requests before they are sent and ensures a native `web_search_*` tool is present for `anthropic-messages` payloads.
+The extension does not register a new tool. It intercepts Anthropic requests before they are sent and ensures a native `web_search_*` tool is present for first-party Anthropic `anthropic-messages` payloads.
 
 | Case | Result |
 |------|--------|
-| API is `anthropic-messages` and no native `web_search_*` tool exists | injects `{ type: "web_search_20250305", name: "web_search", max_uses: 8 }` |
-| Existing native `web_search_*` tool exists | preserves it (no duplication) |
-| Function variant named `web_search` is present | strips function variant and keeps native variant |
+| API is `anthropic-messages` on `api.anthropic.com` (or `compat.supportsWebSearch: true`) and no native `web_search_*` tool exists | injects `{ type: "web_search_20250305", name: "web_search", max_uses: 8 }` |
+| Existing native `web_search_*` tool exists on a supported endpoint | preserves it (no duplication) |
+| Function variant named `web_search` is present on a supported endpoint | strips function variant and keeps native variant |
+| Anthropic-compatible endpoint without `compat.supportsWebSearch` | strips native `web_search_*` tools; leaves function-tool `web_search` untouched |
 | Non-Anthropic API payload | leaves payload unchanged |
 
 `max_uses` is hardcoded to `8`, matching Claude Code/free-code's native web search schema. Optional domain filters can be supplied with comma-separated environment variables:
@@ -22,7 +23,9 @@ The extension does not register a new tool. It intercepts Anthropic requests bef
 - `PI_ANTHROPIC_WEB_SEARCH_ALLOWED_DOMAINS`
 - `PI_ANTHROPIC_WEB_SEARCH_BLOCKED_DOMAINS`
 
-It also appends a system-prompt section for Anthropic sessions indicating native `web_search` availability.
+Set `PI_ANTHROPIC_WEB_SEARCH=0` (or `false` / `off` / `no`) to disable injection on supported endpoints.
+
+It also appends a system-prompt section for supported Anthropic sessions indicating native `web_search` availability.
 
 ## Installation
 
@@ -48,15 +51,20 @@ After installation, restart pi or run `/reload` inside an interactive session.
 ## Development
 
 ```bash
-npm install
-npm run build
-npm test
-npm run typecheck
-npm run check
+bun install
+bun run check
+bun test
 pi -e ./src/index.ts
 ```
 
-The test suite uses vitest. TypeScript is strict, Node-only, and uses ESM imports with `.js` suffixes.
+npm consumers (and the CI smoke job) can use the lockfile instead:
+
+```bash
+npm ci
+npm test
+```
+
+The test suite uses vitest. TypeScript is strict, Node-only, and uses ESM imports with `.js` suffixes. Development targets Bun 1.4.2.
 
 ## Origin
 

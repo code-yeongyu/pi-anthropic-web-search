@@ -4,10 +4,11 @@ Anthropic native web search extension for the pi coding agent.
 
 ## Commands
 
-- `npm install` - install dependencies
-- `npm test` - run vitest tests
-- `npm run typecheck` - run tsgo with strict TypeScript settings
-- `npm run check` - run typecheck and Biome
+- `bun install` - install dependencies (preferred for development)
+- `npm ci` - install from `package-lock.json` (npm consumer / CI smoke)
+- `bun test` / `npm test` - run vitest tests
+- `bun run typecheck` - run tsgo with strict TypeScript settings
+- `bun run check` - run typecheck and Biome
 
 ## Conventions
 
