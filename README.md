@@ -64,7 +64,7 @@ npm ci
 npm test
 ```
 
-The test suite uses vitest. TypeScript is strict, Node-only, and uses ESM imports with `.js` suffixes. Development targets Bun 1.4.2.
+The test suite uses vitest. TypeScript is strict, Node-only, and uses ESM imports with `.js` suffixes. Development targets Bun 1.4.4.
 
 ## Origin
 
